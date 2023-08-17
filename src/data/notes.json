@@ -1,0 +1,43 @@
+{
+    "notas": [
+      {
+        "titulo": "Lista de Compras",
+        "fecha": "2023-08-16",
+        "tareas": [
+          {
+            "descripcion": "Leche",
+            "completada": false
+          },
+          {
+            "descripcion": "Pan",
+            "completada": true
+          },
+          {
+            "descripcion": "Frutas",
+            "completada": false
+          }
+        ],
+        "tipo": "Personal"
+      },
+      {
+        "titulo": "Reunión de Proyecto",
+        "fecha": "2023-08-18",
+        "tareas": [
+          {
+            "descripcion": "Preparar presentación",
+            "completada": false
+          },
+          {
+            "descripcion": "Enviar invitaciones",
+            "completada": false
+          },
+          {
+            "descripcion": "Definir agenda",
+            "completada": true
+          }
+        ],
+        "tipo": "Trabajo"
+      }
+    ]
+  }
+  
