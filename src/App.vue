@@ -1,12 +1,22 @@
 <template>
   <div class="mainContainer">
-    <!-- A CADA NOTA LE TENGO QUE PASAR SUS PARAMETROS-->
-    <noteCard v-for="(note, index) in notes" :key="index">
+
+    <!-- filtro -->
+    <select v-model="selectorTipo">
+      <option value="">todas</option>
+      <option v-for="(tipo, index) in tiposTotal" :key="index"> {{ tipo }} </option>
+    </select>
+
+
+    <!-- visualizar tareas-->
+    <noteCard v-for="(note, index) in filteredNotes" :key="index">
       <VisualizeNote :note="note"></VisualizeNote>
+      <button @click="deleteNote(note.titulo)">Eliminar Tarea</button>
     </noteCard>
 
     <button @click="openPopUp">Agregar Tarea</button>
-    <AnadirNota :visible="visiblePopUp" @close="closePopup"> </AnadirNota>
+
+    <addNote :visible="visiblePopUp" @close="closePopup"> </addNote>
 
   </div>
 </template>
@@ -14,7 +24,7 @@
 <script>
 
 import noteCard from './UI/noteCard';
-import AnadirNota from './components/AnadirNota.vue'
+import addNote from './components/AnadirNota.vue';
 import VisualizeNote from './components/visualizeNote.vue';
 import store from './store';
 
@@ -22,16 +32,13 @@ export default {
   components: {
     noteCard,
     VisualizeNote,
-    AnadirNota
-  },
-  mounted() {
-    //guardamos en las notas al crear el componente
-    this.notes = this.getNotesCreated;
+    addNote
   },
   data() {
     return {
-      notes: [],
       visiblePopUp: false,
+      selectorTipo: '',
+      tiposTotal: ['familia', 'ocio', 'trabajo', 'series', 'peliculas']
     };
   },
   methods: {
@@ -40,12 +47,25 @@ export default {
     },
     closePopup() { //funcion que es un puntero al action increment
       this.visiblePopUp = false;
+    },
+    deleteNote(titulo) {
+      store.commit('eliminarNotaGlobal', titulo);
     }
   },
   computed: {
     getNotesCreated() { //funcion que es un puntero al getter finalCounter
       return store.getters.getNotes;
     },
+
+    //filtrado de notas
+    filteredNotes() {
+      if (this.selectorTipo) {
+        console.log(this.selectorTipo)
+        return store.state.notes.filter(note => note.tipo === this.selectorTipo); 
+      } else {
+        return store.state.notes;
+      }
+    }
   },
 
 }

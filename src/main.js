@@ -3,8 +3,6 @@ import App from './App.vue'
 import store from './store';
 
 
-
-
 const notesFromStorage = localStorage.getItem('jsonData');
 if (notesFromStorage) {
     

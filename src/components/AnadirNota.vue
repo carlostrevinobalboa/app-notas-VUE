@@ -4,21 +4,31 @@
 
       <h2>Añadir Tarea</h2>
 
-      <form @submit.prevent="agregarTarea" class="form">
+      <div class="form">
         <label>Título:</label>
         <input v-model="nuevaNota.titulo" required />
 
         <label>Fecha de finalización:</label>
-        <input v-model="nuevaNota.fecha" type="time" required />
+        <input v-model="nuevaNota.fecha" type="date" required />
 
         <label>Tipo:</label>
-        <input v-model="nuevaNota.tipo" required />
+        <select v-model="nuevaNota.tipo">
+          <option value="familia">Familia</option>
+          <option value="ocio">Ocio</option>
+          <option value="trabajo">Trabajo</option>
+          <option value="series">Series</option>
+          <option value="pelicula">Peliculas</option>
+
+        </select>
 
         <label>Tarea:</label>
-        <input v-model="nuevaTarea.descripcion" type="text" required />
+        <div class="tareas">
+          <input v-model="tareaAux" type="text" required />
+          <button type="button" @click="agregarTareas">+</button>
+        </div>
 
-        <button type="submit">Agregar Tarea</button>
-      </form>
+        <button @click="agregarNota">Agregar Tarea</button>
+      </div>
 
       <button class="popup-close-button" @click="closePopup">Cancelar</button>
 
@@ -46,7 +56,9 @@ export default {
       nuevaTarea: {
         descripcion: '',
         completada: false
-      }
+      },
+      tareaAux: '',
+      tareasAux: [],
 
     };
   },
@@ -54,26 +66,31 @@ export default {
     closePopup() {
       this.$emit('close');
     },
-    agregarTarea() {
-      if (this.nuevaNota.titulo && this.nuevaTarea.descripcion) {
-        const tareaNueva = {
-          descripcion: this.nuevaTarea.descripcion,
-          completada: false,
-        }
-
+    agregarNota() {
+      if (this.nuevaNota.titulo) {
+        //creamos la nueva nota
         const notaNueva = {
           titulo: this.nuevaNota.titulo,
           fecha: this.nuevaNota.fecha,
           tipo: this.nuevaNota.tipo,
-          tareas: [tareaNueva],
+          tareas: [],
         };
 
-        store.commit('agregarNota', notaNueva);
-        localStorage.clear();
-        const notesStringed = JSON.stringify(this.getTotalNotes);
-        localStorage.setItem('jsonData', notesStringed);
+        //creamos la nueva tarea
+        for (const task in this.tareasAux) {
+          console.log("entramos en el for");
+          const tareaNueva = {
+            descripcion: task,
+            completada: false,
+          };
+          notaNueva.tareas.push(tareaNueva);
+        }
 
-        console.log(store.state.notes);
+        //guardamos en el store
+        console.log(notaNueva);
+        store.commit('agregarNota', notaNueva);
+
+        //reseteamos campos y cerramos popUp
         this.nuevaNota.titulo = '';
         this.nuevaNota.fecha = '';
         this.nuevaNota.tipo = '';
@@ -81,7 +98,12 @@ export default {
         this.nuevaTarea.descripcion = '';
         this.$emit('close');
       }
-    }
+    },
+    agregarTareas() {
+      this.tareasAux.push(this.tareaAux);
+      console.log(this.tareasAux)
+    },
+
   },
   computed: {
     getTotalNotes() { //funcion que es un puntero al getter finalCounter
@@ -131,5 +153,14 @@ export default {
 
 .form input {
   margin-bottom: 1em;
+}
+
+.form select {
+  margin-bottom: 1em;
+}
+
+.tareas {
+  display: flex;
+  flex-direction: row;
 }
 </style>
